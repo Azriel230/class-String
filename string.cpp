@@ -11,7 +11,7 @@ int StrLen(char* str_)
 	return counter;
 }
 
-void String::Copy(const String & str_)
+void String::Copy(const String& str_)
 {
 	if (str_.m_size == 0 || str_.m_string == nullptr)
 	{
@@ -70,50 +70,215 @@ String::~String()
 	Clear();
 }
 
-String String::operator+(const String& str_)
+String& String::operator=(const String & str_)
 {
-	String resSrt;
-	resSrt.m_size = m_size + str_.m_size;
-	resSrt.m_string = new char[resSrt.m_size + 1];
-
-	int resCount = 0;
-	for(int i = 0; i < m_size; i++)
-	{
-		resSrt.m_string[resCount] = m_string[i];
-		resCount++;
-	}
-	for (int i = 0; i < str_.m_size; i++)
-	{
-		resSrt.m_string[resCount] = str_.m_string[i];
-		resCount++;
-	}
-
-	resSrt.m_string[resSrt.m_size] = '\0';
-
-	return resSrt;
+	if (this == &str_)
+		return *this;
+	Clear();
+	Copy(str_);
+	return *this;
 }
 
-String& String::operator+=(const String& str_)
+bool String::operator==(const String& str_)
 {
-	String resSrt;
-	resSrt.m_size = m_size + str_.m_size;
-	resSrt.m_string = new char[resSrt.m_size + 1];
+	if (m_size != str_.m_size)
+		return false;
+	if ((m_string == nullptr) && (str_.m_string == nullptr))
+		return true;
+	if ((m_string == nullptr) || (str_.m_string == nullptr))
+		return false;
+
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] != str_.m_string[i])
+			return false;
+	}
+
+	return true;
+}
+
+bool String::operator!=(const String& str_)
+{
+	return !(*this == str_);
+}
+
+bool String::operator<(const String& str_)
+{
+	if (m_size < str_.m_size)
+		return true;
+	if (m_size > str_.m_size)
+		return false;
+	if ((m_string == nullptr) && (str_.m_string == nullptr))
+		return false;
+
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] < str_.m_string[i])
+			return true;
+	}
+
+	return false;
+}
+
+bool String::operator>(const String& str_)
+{
+	if (m_size > str_.m_size)
+		return true;
+	if (m_size < str_.m_size)
+		return false;
+	if ((m_string == nullptr) && (str_.m_string == nullptr))
+		return false;
+
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] > str_.m_string[i])
+			return true;
+	}
+
+	return false;
+}
+
+bool String::operator<=(const String& str_)
+{
+	if (m_size < str_.m_size)
+		return true;
+	if (m_size > str_.m_size)
+		return false;
+	if ((m_string == nullptr) && (str_.m_string == nullptr))
+		return true;
+
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] <= str_.m_string[i])
+			return true;
+	}
+
+	return false;
+}
+
+bool String::operator>=(const String& str_)
+{
+	if (m_size > str_.m_size)
+		return true;
+	if (m_size < str_.m_size)
+		return false;
+	if ((m_string == nullptr) && (str_.m_string == nullptr))
+		return true;
+
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] >= str_.m_string[i])
+			return true;
+	}
+
+	return false;
+}
+
+String String::operator+(const String& str_)
+{
+	String resStr;
+	resStr.m_size = m_size + str_.m_size;
+	resStr.m_string = new char[resStr.m_size + 1];
 
 	int resCount = 0;
 	for (int i = 0; i < m_size; i++)
 	{
-		resSrt.m_string[resCount] = m_string[i];
+		resStr.m_string[resCount] = m_string[i];
 		resCount++;
 	}
 	for (int i = 0; i < str_.m_size; i++)
 	{
-		resSrt.m_string[resCount] = str_.m_string[i];
+		resStr.m_string[resCount] = str_.m_string[i];
 		resCount++;
 	}
 
-	resSrt.m_string[resSrt.m_size] = '\0';
+	resStr.m_string[resStr.m_size] = '\0';
 
-	return resSrt;
+	return resStr;
+}
+
+String& String::operator+=(const String& str_)
+{
+	String resStr;
+	resStr.m_size = m_size + str_.m_size;
+	resStr.m_string = new char[resStr.m_size + 1];
+
+	int resCount = 0;
+	for (int i = 0; i < m_size; i++)
+	{
+		resStr.m_string[resCount] = m_string[i];
+		resCount++;
+	}
+	for (int i = 0; i < str_.m_size; i++)
+	{
+		resStr.m_string[resCount] = str_.m_string[i];
+		resCount++;
+	}
+
+	resStr.m_string[resStr.m_size] = '\0';
+
+	*this = resStr;
+
+	return resStr;
+}
+
+bool String::IsEmpty()
+{
+	return (m_string == nullptr);
+}
+
+int String::Length()
+{
+	return m_size;
+}
+
+char& String::At(int index_)
+{
+	if ((index_ < 0) || (index_ >= m_size))
+	{
+		std::cout << "Error! Out of range!";
+		exit(EXIT_FAILURE);
+	}
+
+	return m_string[index_];
+}
+
+char& String::Front()
+{
+	if (m_size == 0)
+	{
+		std::cout << "Error! Out of range!";
+		exit(EXIT_FAILURE);
+	}
+
+	return m_string[0];
+}
+
+char& String::Back()
+{
+	if (m_size == 0)
+	{
+		std::cout << "Error! Out of range!";
+		exit(EXIT_FAILURE);
+	}
+
+	return m_string[m_size - 1];
+}
+
+char& String::operator[](int index_)
+{
+	if ((index_ < 0) || (index_ >= m_size))
+	{
+		std::cout << "Error! Out of range!";
+		exit(EXIT_FAILURE);
+	}
+
+	return m_string[index_];
+}
+
+String& String::Insert(char sym_, int pos_)
+{
+
 }
 
 
@@ -129,10 +294,10 @@ std::ostream& operator<<(std::ostream& stream, const String& str_)
 std::istream& operator>>(std::istream& stream, String& str_)
 {
 	str_.Clear();
-	
+
 	char buffStr[1024];
 	int countSize = 0;
-	
+
 	while (stream.peek() == '\n')
 		stream.ignore();
 
@@ -150,7 +315,7 @@ std::istream& operator>>(std::istream& stream, String& str_)
 	}
 
 	buffStr[countSize] = '\0';
-	
+
 	str_.m_size = countSize;
 	str_.m_string = new char[str_.m_size + 1];
 
