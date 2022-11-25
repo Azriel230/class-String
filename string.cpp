@@ -70,7 +70,7 @@ String::~String()
 	Clear();
 }
 
-String& String::operator=(const String & str_)
+String& String::operator=(const String& str_)
 {
 	if (this == &str_)
 		return *this;
@@ -278,9 +278,79 @@ char& String::operator[](int index_)
 
 String& String::Insert(char sym_, int pos_)
 {
+	if ((pos_ < 0) || (pos_ > m_size))
+	{
+		std::cout << "Error! Out of range";
+		exit(EXIT_FAILURE);
+	}
 
+	int n = 0;
+	char* tempStr = new char[m_size + 2]; 
+	while (n < pos_)
+	{
+		tempStr[n] = m_string[n];
+		++n;
+	}
+	tempStr[pos_] = sym_;
+	while (m_string[n] != '\0')
+	{
+		tempStr[n + 1] = m_string[n];
+		n++;
+	}
+	tempStr[n + 1] = '\0';
+
+	++m_size;
+	delete[] m_string;
+	m_string = new char[m_size + 1];
+
+	for (int i = 0; i < m_size; i++)
+		m_string[i] = tempStr[i];
+	m_string[m_size] = '\0';
+
+	delete[] tempStr;
+
+	return *this;
 }
 
+String& String::Erase(int firstPos_, int lastPos_)
+{
+	if ((firstPos_ < 0) || (lastPos_ > m_size))
+	{
+		std::cout << "Error! Out of range";
+		exit(EXIT_FAILURE);
+	}
+
+	if (firstPos_ > lastPos_)
+	{
+		std::cout << "Error! You enter wrong range to delete";
+		exit(EXIT_FAILURE);
+	}
+
+	char buffStr[1024];
+
+	int n = 0;
+	for (; n < firstPos_; n++)
+		buffStr[n] = m_string[n];
+	for (int i = lastPos_ + 1; i < m_size; i++, n++)
+		buffStr[n] = m_string[i];
+
+	buffStr[n] = '\0';
+
+	m_size -= lastPos_ - firstPos_ + 1;
+	delete[] m_string;
+
+	if (m_size == 0)
+	{
+		m_string = nullptr;
+		return *this;
+	}
+
+	for (int i = 0; i < m_size; i++)
+		m_string[i] = buffStr[i];
+
+	m_string[m_size] = '\0';
+	return *this;
+}
 
 std::ostream& operator<<(std::ostream& stream, const String& str_)
 {
@@ -326,3 +396,24 @@ std::istream& operator>>(std::istream& stream, String& str_)
 
 	return stream;
 }
+
+////копирует всю строку From в To
+//char* StrCopyFull(char* strFrom, char* strTo)
+//{
+//	for (int i = 0; strFrom[i] != '\0'; i++)
+//		strTo[i] = strFrom[i];
+//	return strTo;
+//}
+//
+////копирует с определенного символа (pos) строки To полную строку From
+//char* StrCopyFrom(char* strFrom, char* strTo, int pos)
+//{
+//	char* resStr = new char[StrLen(strFrom) + StrLen(strTo) + 1];
+//	int n = 0;
+//	while (n < pos)
+//	{
+//		resStr[n] = strTo[n];
+//		n++;
+//	}
+//
+//}
