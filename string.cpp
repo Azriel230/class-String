@@ -44,9 +44,9 @@ String::String()
 
 String::String(int size_, char* str_)
 {
-	if (size_ == 0)
+	if ((size_ == 0) || (str_ == nullptr))
 	{
-		m_size = 0;
+		m_size = size_;
 		m_string = nullptr;
 		return;
 	}
@@ -70,7 +70,7 @@ String::~String()
 	Clear();
 }
 
-String& String::operator=(const String& str_)
+String& String::operator=(const String & str_)
 {
 	if (this == &str_)
 		return *this;
@@ -285,7 +285,7 @@ String& String::Insert(char sym_, int pos_)
 	}
 
 	int n = 0;
-	char* tempStr = new char[m_size + 2]; 
+	char* tempStr = new char[m_size + 2];
 	while (n < pos_)
 	{
 		tempStr[n] = m_string[n];
@@ -352,6 +352,114 @@ String& String::Erase(int firstPos_, int lastPos_)
 	return *this;
 }
 
+String& String::Push_back(char sym_)
+{
+	char buffstr[1024];
+	int sizeStr = 0;
+
+	while (m_string[sizeStr] != '\0')
+	{
+		buffstr[sizeStr] = m_string[sizeStr];
+		sizeStr++;
+	}
+	sizeStr++;
+	buffstr[sizeStr] = sym_;
+	buffstr[sizeStr + 1] = '\0';
+
+	delete[]m_string;
+	m_size++;
+	m_string = new char[m_size + 1];
+
+	for (int i = 0; buffstr[i] != '\0'; i++)
+		m_string[i] = buffstr[i];
+	m_string[m_size] = '\0';
+
+	return *this;
+}
+
+void String::Resize(int size_)
+{
+	if (size_ == m_size)
+		return;
+	char buffstr[1024];
+	int sizeStr = 0;
+
+	if (size_ > m_size)
+	{
+		while (m_string[sizeStr] != '\0')
+		{
+			buffstr[sizeStr] = m_string[sizeStr];
+			sizeStr++;
+		}
+		while (sizeStr < size_)
+		{
+			buffstr[sizeStr] = '0';
+			sizeStr++;
+		}
+		buffstr[size_] = '\0';
+
+		delete[] m_string;
+		m_size = size_;
+		m_string = new char[m_size + 1];
+		for (int i = 0; i < m_size; i++)
+		{
+			m_string[i] = buffstr[i];
+		}
+		m_string[size_] = '\0';
+	}
+	else
+	{
+		while (sizeStr < size_)
+		{
+			buffstr[sizeStr] = m_string[sizeStr];
+			sizeStr++;
+		}
+		buffstr[size_] = '\0';
+
+		delete[] m_string;
+		m_size = size_;
+		m_string = new char[m_size + 1];
+		for (int i = 0; i < m_size; i++)
+		{
+			m_string[i] = buffstr[i];
+		}
+		m_string[size_] = '\0';
+	}
+}
+
+void String::Swap(String str_)
+{
+	String tempStr = *this;
+	*this = str_;
+	str_ = tempStr;
+	tempStr.Clear();
+}
+
+String& String::Append(const String& str_)
+{
+	String resStr;
+	resStr.m_size = m_size + str_.m_size;
+	resStr.m_string = new char[resStr.m_size + 1];
+
+	int resCount = 0;
+	for (int i = 0; i < m_size; i++)
+	{
+		resStr.m_string[resCount] = m_string[i];
+		resCount++;
+	}
+	for (int i = 0; i < str_.m_size; i++)
+	{
+		resStr.m_string[resCount] = str_.m_string[i];
+		resCount++;
+	}
+
+	resStr.m_string[resStr.m_size] = '\0';
+
+	return resStr;
+}
+
+
+
 std::ostream& operator<<(std::ostream& stream, const String& str_)
 {
 	stream << '"';
@@ -396,24 +504,3 @@ std::istream& operator>>(std::istream& stream, String& str_)
 
 	return stream;
 }
-
-////копирует всю строку From в To
-//char* StrCopyFull(char* strFrom, char* strTo)
-//{
-//	for (int i = 0; strFrom[i] != '\0'; i++)
-//		strTo[i] = strFrom[i];
-//	return strTo;
-//}
-//
-////копирует с определенного символа (pos) строки To полную строку From
-//char* StrCopyFrom(char* strFrom, char* strTo, int pos)
-//{
-//	char* resStr = new char[StrLen(strFrom) + StrLen(strTo) + 1];
-//	int n = 0;
-//	while (n < pos)
-//	{
-//		resStr[n] = strTo[n];
-//		n++;
-//	}
-//
-//}
