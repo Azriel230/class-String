@@ -42,6 +42,10 @@ public:
 	void Swap(String str_);
 	String& Append(const String& str_);
 
+	//Operations
+	const char* C_str();
+	//Copy
+
 	friend std::ostream& operator<<(std::ostream& stream, const String& str_);
 	friend std::istream& operator>>(std::istream& stream, String& str_);
 };
