@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 
 class String {
@@ -7,7 +8,7 @@ class String {
 public:
 	void Clear();
 	String();
-	String(int size_, char* str_);
+	String(int size_, const char* str_);
 	String(const String& str_);
 	~String();
 
@@ -15,7 +16,7 @@ public:
 
 	bool operator==(const String& str_);
 	bool operator!=(const String& str_);
-	bool operator<(const String & str_);
+	bool operator<(const String& str_);
 	bool operator>(const String& str_);
 	bool operator<=(const String& str_);
 	bool operator>=(const String& str_);
@@ -45,6 +46,9 @@ public:
 	//Operations
 	const char* C_str();
 	//Copy
+	int find(const String& str_, int pos_);
+	String substr(int len_, int pos_);
+	int compare(const String& str_);
 
 	friend std::ostream& operator<<(std::ostream& stream, const String& str_);
 	friend std::istream& operator>>(std::istream& stream, String& str_);
