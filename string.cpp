@@ -1,5 +1,6 @@
 #include <iostream>
 #include "string.h"
+#include "SException.h"
 
 int StrLen(char* str_)
 {
@@ -42,7 +43,7 @@ String::String()
 	m_string = nullptr;
 }
 
-String::String(int size_, char* str_)
+String::String(int size_, const char* str_)
 {
 	if ((size_ == 0) || (str_ == nullptr))
 	{
@@ -70,7 +71,7 @@ String::~String()
 	Clear();
 }
 
-String& String::operator=(const String & str_)
+String& String::operator=(const String& str_)
 {
 	if (this == &str_)
 		return *this;
@@ -219,7 +220,7 @@ String& String::operator+=(const String& str_)
 
 	*this = resStr;
 
-	return resStr;
+	return *this;
 }
 
 bool String::IsEmpty()
@@ -235,10 +236,7 @@ int String::Length()
 char& String::At(int index_)
 {
 	if ((index_ < 0) || (index_ >= m_size))
-	{
-		std::cout << "Error! Out of range!";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
 
 	return m_string[index_];
 }
@@ -246,10 +244,7 @@ char& String::At(int index_)
 char& String::Front()
 {
 	if (m_size == 0)
-	{
-		std::cout << "Error! Out of range!";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
 
 	return m_string[0];
 }
@@ -257,10 +252,7 @@ char& String::Front()
 char& String::Back()
 {
 	if (m_size == 0)
-	{
-		std::cout << "Error! Out of range!";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
 
 	return m_string[m_size - 1];
 }
@@ -268,10 +260,7 @@ char& String::Back()
 char& String::operator[](int index_)
 {
 	if ((index_ < 0) || (index_ >= m_size))
-	{
-		std::cout << "Error! Out of range!";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
 
 	return m_string[index_];
 }
@@ -279,10 +268,7 @@ char& String::operator[](int index_)
 String& String::Insert(char sym_, int pos_)
 {
 	if ((pos_ < 0) || (pos_ > m_size))
-	{
-		std::cout << "Error! Out of range";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
 
 	int n = 0;
 	char* tempStr = new char[m_size + 2];
@@ -315,16 +301,11 @@ String& String::Insert(char sym_, int pos_)
 String& String::Erase(int firstPos_, int lastPos_)
 {
 	if ((firstPos_ < 0) || (lastPos_ > m_size))
-	{
-		std::cout << "Error! Out of range";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! Out of range!", *this));
+
 
 	if (firstPos_ > lastPos_)
-	{
-		std::cout << "Error! You enter wrong range to delete";
-		exit(EXIT_FAILURE);
-	}
+		throw(SException("Error! You enter wrong range to delete", *this));
 
 	char buffStr[1024];
 
@@ -458,7 +439,73 @@ String& String::Append(const String& str_)
 	return resStr;
 }
 
+const char* String::C_str()
+{
+	char* resStr_ = new char[m_size + 1];
+	for (int i = 0; i < m_size; i++)
+		resStr_[i] = m_string[i];
+	resStr_[m_size] = '\0';
+	return resStr_;
+}
 
+int String::find(const String& str_, int pos_)
+{
+	int i = pos_;
+	int j = 0;
+	int res_pos = -1;
+
+	for (i; i < m_size; i++)
+	{
+		if (m_string[i] == str_.m_string[i])
+		{
+			res_pos = i;
+			for (i, j; j < str_.m_size; i++, j++)
+			{
+				if (m_string[i] != str_.m_string[i])
+				{
+					res_pos = -1;
+					break;
+				}
+			}
+		}
+	}
+
+	return res_pos;
+}
+
+String String::substr(int len_, int pos_)
+{
+	String res;
+	if (pos_ == m_size)
+		return res;
+	if (pos_ > m_size)
+		throw(SException("Error! Out of range!", *this));
+
+	res.m_string = new char[len_ + 1];
+	int j = pos_;
+	int i = 0;
+	for (i, j; i < len_ && j < m_size; i++, j++)
+		res.m_string[i] = m_string[j];
+	res.m_string[len_] = '\0';
+	res.m_size = i;
+	return res;
+}
+
+int String::compare(const String& str_)
+{
+	if (m_size < str_.m_size)
+		return -1;
+	if (m_size > str_.m_size)
+		return 1;
+	for (int i = 0; i < m_size; i++)
+	{
+		if (m_string[i] < str_.m_string[i])
+			return -1;
+		if (m_string[i] > str_.m_string[i])
+			return 1;
+	}
+	return 0;
+}
 
 std::ostream& operator<<(std::ostream& stream, const String& str_)
 {
