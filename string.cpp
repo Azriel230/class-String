@@ -298,7 +298,7 @@ String& String::Insert(char sym_, int pos_)
 	return *this;
 }
 
-String& String::Erase(int firstPos_, int lastPos_)
+String& String::Erase(int firstPos_, int lastPos_) 
 {
 	if ((firstPos_ < 0) || (lastPos_ > m_size))
 		throw(SException("Error! Out of range!", *this));
@@ -326,6 +326,8 @@ String& String::Erase(int firstPos_, int lastPos_)
 		return *this;
 	}
 
+	m_string = new char[m_size + 1];
+
 	for (int i = 0; i < m_size; i++)
 		m_string[i] = buffStr[i];
 
@@ -343,7 +345,6 @@ String& String::Push_back(char sym_)
 		buffstr[sizeStr] = m_string[sizeStr];
 		sizeStr++;
 	}
-	sizeStr++;
 	buffstr[sizeStr] = sym_;
 	buffstr[sizeStr + 1] = '\0';
 
@@ -408,7 +409,7 @@ void String::Resize(int size_)
 	}
 }
 
-void String::Swap(String str_)
+void String::Swap(String& str_)
 {
 	String tempStr = *this;
 	*this = str_;
@@ -416,7 +417,7 @@ void String::Swap(String str_)
 	tempStr.Clear();
 }
 
-String& String::Append(const String& str_)
+String String::Append(const String& str_)
 {
 	String resStr;
 	resStr.m_size = m_size + str_.m_size;
@@ -448,7 +449,7 @@ const char* String::C_str()
 	return resStr_;
 }
 
-int String::find(const String& str_, int pos_)
+int String::Find(const String& str_, int pos_)
 {
 	int i = pos_;
 	int j = 0;
@@ -473,7 +474,7 @@ int String::find(const String& str_, int pos_)
 	return res_pos;
 }
 
-String String::substr(int len_, int pos_)
+String String::SubStr(int len_, int pos_)
 {
 	String res;
 	if (pos_ == m_size)
@@ -491,7 +492,7 @@ String String::substr(int len_, int pos_)
 	return res;
 }
 
-int String::compare(const String& str_)
+int String::Compare(const String& str_)
 {
 	if (m_size < str_.m_size)
 		return -1;
